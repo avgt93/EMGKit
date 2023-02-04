@@ -32,13 +32,11 @@ function recordingGraph() {
       mode: "lines",
       line: { color: "#80CAF6" },
     },
-    {
-      y: [1, 2, 3].map(rand),
-      mode: "lines",
-      line: { color: "#DF56F1" },
-    },
   ]);
 }
+const animate = document.getElementById("animate");
+animate.addEventListener("click", () => {});
+
 btn.addEventListener("click", async () => {
   const fileData = await window.electronAPI.openFile();
   filePathElement.value = fileData[0];
@@ -53,7 +51,23 @@ btn.addEventListener("click", async () => {
     plotList.x.push(plottingData[i][0]);
     plotList.y.push(plottingData[i][1]);
   }
-  if (plotList.x.length != 0 && plotList.y.length != 0) {
+  if (animate.checked) {
+    recordingGraph();
+    var cnt = 0;
+
+    var interval = setInterval(function () {
+      Plotly.extendTraces(
+        "tester",
+        {
+          y: [[plotList.y[cnt]]],
+        },
+        [0]
+      );
+
+      if (++cnt === 100) clearInterval(interval);
+    }, 300);
+  }
+  if (plotList.x.length != 0 && plotList.y.length != 0 && !animate.checked) {
     plotGraph();
   }
 });
