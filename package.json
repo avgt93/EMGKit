@@ -10,5 +10,9 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^22.2.0"
+  },
+  "dependencies": {
+    "@types/electron": "^1.6.10",
+    "typescript": "^4.9.5"
   }
 }
