@@ -11,6 +11,21 @@
     <script src="https://cdn.plot.ly/plotly-2.18.0.min.js"></script>
   </head>
   <body>
+    <div id="upload" class="upload">
+      <h3>Upload a Data to Graph (CSV)</h3>
+      <form action="">
+        <input
+          type="text"
+          id="filePath"
+          readonly="readonly"
+          class="selected-dir"
+        />
+        <button type="button" id="upload-btn" class="file-select-btn">
+          Open a File
+        </button>
+        <!-- <button id="upload-btn" class="uploadButton">Graph</button> -->
+      </form>
+    </div>
     <div id="tester" class="test"></div>
     <script src="./renderer.js"></script>
   </body>
