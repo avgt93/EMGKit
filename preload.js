@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
   openFile: () => ipcRenderer.invoke("dialog:openFile"),
+  // sendGraph: () => ipcRenderer.invoke("send:graph"),
 });
 
 window.addEventListener("DOMContentLoaded", () => {
