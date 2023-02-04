@@ -64,8 +64,8 @@ btn.addEventListener("click", async () => {
         [0]
       );
 
-      if (++cnt === 100) clearInterval(interval);
-    }, 300);
+      if (++cnt === plotList.x.length) clearInterval(interval);
+    }, 100);
   }
   if (plotList.x.length != 0 && plotList.y.length != 0 && !animate.checked) {
     plotGraph();
