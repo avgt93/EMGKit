@@ -3,13 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
+      http-equiv="Content-Security-Policy: script-src 'self'"
+      content="default-src 'self';"
     />
     <title>EMG-Graph</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.plot.ly/plotly-2.18.0.min.js"></script>
   </head>
   <body>
-    <h1>Hello World!</h1>
+    <div id="tester" class="test"></div>
     <script src="./renderer.js"></script>
   </body>
 </html>

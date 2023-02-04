@@ -1,5 +1,4 @@
 const path = require("path");
-
 const { app, BrowserWindow } = require("electron");
 
 const createWindow = () => {
@@ -11,7 +10,7 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile("index.html");
+  win.loadFile("./index.html");
 };
 
 app.on("window-all-closed", () => {
