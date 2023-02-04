@@ -22,6 +22,23 @@ function plotGraph() {
     }
   );
 }
+function rand() {
+  return Math.random();
+}
+function recordingGraph() {
+  Plotly.newPlot("tester", [
+    {
+      y: [1, 2, 3].map(rand),
+      mode: "lines",
+      line: { color: "#80CAF6" },
+    },
+    {
+      y: [1, 2, 3].map(rand),
+      mode: "lines",
+      line: { color: "#DF56F1" },
+    },
+  ]);
+}
 btn.addEventListener("click", async () => {
   const fileData = await window.electronAPI.openFile();
   filePathElement.value = fileData[0];
@@ -41,9 +58,20 @@ btn.addEventListener("click", async () => {
   }
 });
 
-const gbtn = document.getElementById("submit-btn");
+const recordBtn = document.getElementById("record-btn");
 
-gbtn.addEventListener("click", async () => {
-  const data = await window.electronAPI.sendGraph();
-  console.log(data);
+recordBtn.addEventListener("click", () => {
+  recordingGraph();
+  var cnt = 0;
+  var interval = setInterval(function () {
+    Plotly.extendTraces(
+      "tester",
+      {
+        y: [[rand()], [rand()]],
+      },
+      [0, 1]
+    );
+
+    if (++cnt === 100) clearInterval(interval);
+  }, 300);
 });

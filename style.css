@@ -4,15 +4,15 @@
 }
 .file-select-btn {
   border: 1px solid #ccc;
-  background-color: #e70049;
+  background-color: #1976d2;
   color: #ffffff;
   display: inline-block;
   padding: 8px 12px;
   cursor: pointer;
 }
-.file-upload-btn {
+.record-btn {
   border: 1px solid #ccc;
-  background-color: #1976d2;
+  background-color: #e70049;
   color: #ffffff;
   display: inline-block;
   padding: 9px 12px;
