@@ -17,6 +17,11 @@ import { resolveHtmlPath } from './util';
 import fs, { PathLike } from 'fs';
 import { parse } from 'csv-parse';
 import { Path } from 'react-router-dom';
+import { EMGFilter } from '../../utils/EMGFilter/EMGFilters';
+import {
+  SAMPLE_FREQUENCY,
+  NOTCH_FREQUENCY,
+} from '../../utils/EMGFilter/constants';
 
 class AppUpdater {
   constructor() {
@@ -67,7 +72,25 @@ async function handleFileOpen() {
     return;
   } else {
     const data: string[][] = <Array<Array<string>>>await fileReader(filePaths);
-    return [filePaths[0], data];
+    data.shift();
+
+    let filteredData: string[][] = [[]];
+
+    for (var i = 0; i < data.length; i++) {
+      let output: number = EMGFilter(
+        SAMPLE_FREQUENCY.FREQ_500HZ,
+        NOTCH_FREQUENCY.FREQ_50HZ,
+        true,
+        true,
+        true,
+        parseInt(data[i][1])
+      );
+      filteredData = data;
+      filteredData[i].pop();
+      filteredData[i].push(output.toString());
+    }
+    console.log(filteredData);
+    return [filePaths[0], filteredData];
   }
 }
 
@@ -78,7 +101,7 @@ function fileReader(path: string[]) {
     for (let i = 0; i < path.length; i++) {
       let file: PathLike = <PathLike>path[i];
       fs.createReadStream(file)
-        .pipe(parse({ delimiter: ',', from_line: 2 }))
+        .pipe(parse({ delimiter: ',', from_line: 1 }))
         .on('data', function (csvrow: string[]) {
           csvData.push(csvrow);
         })
