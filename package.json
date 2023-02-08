@@ -104,7 +104,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-plotly.js": "^2.6.0",
-    "react-router-dom": "^6.8.0"
+    "react-router-dom": "^6.8.0",
+    "recharts": "^2.3.2"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",

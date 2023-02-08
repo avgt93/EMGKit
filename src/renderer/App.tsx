@@ -3,34 +3,44 @@ import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import './App.css';
 import Plot from 'react-plotly.js';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from 'recharts';
 
 interface plotList {
-  x: string[];
-  y: string[];
+  name: string;
+  value: number;
 }
 
 function Hello() {
   const [filePath, setFilePath] = useState<string[] | string>('');
-  const [plotList, setPlotList] = useState<plotList>({ x: [], y: [] });
+  const [plotList, setPlotList] = useState<Array<plotList>>([
+    { name: '', value: 0 },
+  ]);
   // const
 
   const handleOpenFile = async () => {
-    const tempList: plotList = { x: [], y: [] };
+    const tempList: plotList[] = [{ name: '', value: 0 }];
     const fileData: string[][] = await window.electron.openFile(
       'dialog:openFile',
       () => [[]]
     );
     setFilePath(fileData[0]);
     let plottingData: string[] = fileData[1];
-    plotList.x = [];
-    plotList.y = [];
-    let tempDate = new Date(0);
-    let startTime = plottingData[0][0];
+    // let tempDate = new Date(0);
+    // let startTime = plottingData[0][0];
     for (let i = 0; i < plottingData.length; i++) {
-      let tempDate = new Date(0);
-      // tempDate.setUTCMilliseconds(plottingData[i][0]);
-      tempList.x.push(plottingData[i][0]);
-      tempList.y.push(plottingData[i][1]);
+      let temp: plotList = {
+        name: plottingData[i][0],
+        value: parseInt(plottingData[i][1]),
+      };
+      tempList.push(temp);
     }
     setPlotList(tempList);
   };
@@ -67,18 +77,14 @@ function Hello() {
         </div>
       </div>
       <div id="plotly-container" className="test">
-        <Plot
-          data={[
-            {
-              x: plotList.x,
-              y: plotList.y,
-              // type: 'scatter',
-              // mode: 'lines+markers',
-              marker: { color: 'red' },
-            },
-          ]}
-          layout={{ width: 750, height: 500, title: 'A Fancy Plot' }}
-        />
+        <LineChart width={750} height={500} data={plotList}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="value" stroke="#8884d8" />
+        </LineChart>
       </div>
     </div>
   );
