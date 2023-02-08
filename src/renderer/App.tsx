@@ -11,16 +11,11 @@ import {
   Title,
   Tooltip,
   Legend,
-  TimeScale,
 } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 
-import { Line, Chart } from 'react-chartjs-2';
-import 'chartjs-plugin-streaming';
-import 'chartjs-adapter-luxon';
-import type { ChartOptions } from 'chart.js/dist/types/index';
-import ChartStreaming from 'chartjs-plugin-streaming';
-import { RealTimeScale } from 'chartjs-plugin-streaming';
+import { Line } from 'react-chartjs-2';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,8 +24,6 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  TimeScale,
-  ChartStreaming,
   zoomPlugin
 );
 
@@ -45,46 +38,6 @@ interface plotList {
   datasets: valueList[];
 }
 
-const rTData = {
-  datasets: [
-    {
-      label: 'Dataset 1 (linear interpolation)',
-      backgroundColor: 'rgb(255, 255, 255)',
-      borderColor: 'rgb(255, 99, 132)',
-      fill: false,
-      lineTension: 0,
-      borderDash: [8, 4],
-      data: [],
-    },
-  ],
-};
-const rTOptions: any = {
-  plugins: {
-    // Change options for ALL axes of THIS CHART
-    streaming: {
-      duration: 20000,
-    },
-  },
-  scales: {
-    x: {
-      type: 'realtime',
-      // Change options only for THIS AXIS
-      realtime: {
-        duration: 20000,
-        refresh: 100,
-        onRefresh: function (chart: { data: { datasets: any[] } }) {
-          chart.data.datasets.forEach(function (dataset) {
-            dataset.data.push({
-              x: Date.now(),
-              y: Math.random(),
-            });
-          });
-        },
-      },
-    },
-    y: { display: true },
-  },
-};
 export const options = {
   responsive: true,
   plugins: {
@@ -125,8 +78,6 @@ function Hello() {
     ],
   });
   // const
-
-  const handleRecord = () => {};
 
   const handleOpenFile = async () => {
     const fileData: string[][] = await window.electron.openFile(
@@ -178,7 +129,6 @@ function Hello() {
           </button>
           <button
             type="button"
-            onClick={handleRecord}
             id="record-btn"
             className="record-btn"
             // onClick="recordingGraph()"
@@ -190,14 +140,7 @@ function Hello() {
         </div>
       </div>
       <div id="plotly-container" className="test">
-        <Chart
-          type="line"
-          width={750}
-          height={500}
-          data={rTData}
-          options={rTOptions}
-        />
-        {/* <Line width={750} height={500} options={options} data={plotList} /> */}
+        <Line width={750} height={500} options={options} data={plotList} />
       </div>
     </div>
   );
