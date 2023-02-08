@@ -2,31 +2,80 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import './App.css';
-import Plot from 'react-plotly.js';
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
   Tooltip,
   Legend,
-} from 'recharts';
+} from 'chart.js';
 
-interface plotList {
-  name: string;
-  value: number;
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+interface valueList {
+  label: string;
+  data: number[];
+  borderColor: string;
+  backgroundColor: string;
 }
+interface plotList {
+  labels: string[];
+  datasets: valueList[];
+}
+
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Chart.js Line Chart',
+    },
+  },
+};
 
 function Hello() {
   const [filePath, setFilePath] = useState<string[] | string>('');
-  const [plotList, setPlotList] = useState<Array<plotList>>([
-    { name: '', value: 0 },
-  ]);
+  const [plotList, setPlotList] = useState<plotList>({
+    labels: [''],
+    datasets: [
+      {
+        label: '',
+        data: [],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+    ],
+  });
   // const
 
   const handleOpenFile = async () => {
-    const tempList: plotList[] = [{ name: '', value: 0 }];
+    const tempList: plotList = {
+      labels: [''],
+      datasets: [
+        {
+          label: 'current',
+          data: [],
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+      ],
+    };
     const fileData: string[][] = await window.electron.openFile(
       'dialog:openFile',
       () => [[]]
@@ -36,11 +85,10 @@ function Hello() {
     // let tempDate = new Date(0);
     // let startTime = plottingData[0][0];
     for (let i = 0; i < plottingData.length; i++) {
-      let temp: plotList = {
-        name: plottingData[i][0],
-        value: parseInt(plottingData[i][1]),
-      };
-      tempList.push(temp);
+      // let tempDate = new Date(0);
+      // tempDate.setUTCMilliseconds(plottingData[i][0]);
+      tempList.labels.push(plottingData[i][0]);
+      tempList.datasets[0].data.push(parseInt(plottingData[i][1]));
     }
     setPlotList(tempList);
   };
@@ -77,14 +125,7 @@ function Hello() {
         </div>
       </div>
       <div id="plotly-container" className="test">
-        <LineChart width={750} height={500} data={plotList}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />
-        </LineChart>
+        <Line width={750} height={500} options={options} data={plotList} />
       </div>
     </div>
   );
