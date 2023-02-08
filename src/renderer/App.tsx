@@ -13,6 +13,7 @@ import {
   Legend,
   TimeScale,
 } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
 import { Line, Chart } from 'react-chartjs-2';
 import 'chartjs-plugin-streaming';
@@ -29,7 +30,8 @@ ChartJS.register(
   Tooltip,
   Legend,
   TimeScale,
-  ChartStreaming
+  ChartStreaming,
+  zoomPlugin
 );
 
 interface valueList {
@@ -86,12 +88,25 @@ const rTOptions: any = {
 export const options = {
   responsive: true,
   plugins: {
+    zoom: {
+      pan: {
+        enabled: true,
+      },
+      zoom: {
+        wheel: {
+          enabled: true,
+        },
+        pinch: {
+          enabled: true,
+        },
+      },
+    },
     legend: {
       position: 'top' as const,
     },
     title: {
       display: true,
-      text: 'Chart.js Line Chart',
+      text: 'EMG-Graph',
     },
   },
 };
@@ -114,6 +129,11 @@ function Hello() {
   const handleRecord = () => {};
 
   const handleOpenFile = async () => {
+    const fileData: string[][] = await window.electron.openFile(
+      'dialog:openFile',
+      () => [[]]
+    );
+    setFilePath(fileData[0]);
     const tempList: plotList = {
       labels: [''],
       datasets: [
@@ -125,11 +145,6 @@ function Hello() {
         },
       ],
     };
-    const fileData: string[][] = await window.electron.openFile(
-      'dialog:openFile',
-      () => [[]]
-    );
-    setFilePath(fileData[0]);
     let plottingData: string[] = fileData[1];
     // let tempDate = new Date(0);
     // let startTime = plottingData[0][0];
