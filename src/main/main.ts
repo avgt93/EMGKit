@@ -60,11 +60,9 @@ if (isDebug) {
 // };
 
 async function handleFileOpen() {
-  console.log('1');
   const { canceled, filePaths } = await dialog?.showOpenDialog({
     properties: [],
   });
-  console.log('2');
   if (canceled) {
     return;
   } else {
