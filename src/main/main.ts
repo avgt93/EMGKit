@@ -14,9 +14,9 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import fs from 'fs';
-import array from 'lodash';
+import fs, { PathLike } from 'fs';
 import { parse } from 'csv-parse';
+import { Path } from 'react-router-dom';
 
 class AppUpdater {
   constructor() {
@@ -46,18 +46,18 @@ if (isDebug) {
   require('electron-debug')();
 }
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+// const installExtensions = async () => {
+//   const installer = require('electron-devtools-installer');
+//   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+//   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log);
-};
+//   return installer
+//     .default(
+//       extensions.map((name) => installer[name]),
+//       forceDownload
+//     )
+//     .catch(console.log);
+// };
 
 async function handleFileOpen() {
   console.log('1');
@@ -68,21 +68,20 @@ async function handleFileOpen() {
   if (canceled) {
     return;
   } else {
-    const data = await fileReader(filePaths);
+    const data: string[][] = <Array<Array<string>>>await fileReader(filePaths);
     return [filePaths[0], data];
   }
 }
 
-function fileReader(path: string | any[]) {
+ipcMain.handle('dialog:openFile', handleFileOpen);
+function fileReader(path: string[]) {
   return new Promise((resolve) => {
-    var csvData: any[];
-    for (var i = 0; i < path.length; i++) {
-      var file = path[i];
-
+    let csvData: string[][] = [[]];
+    for (let i = 0; i < path.length; i++) {
+      let file: PathLike = <PathLike>path[i];
       fs.createReadStream(file)
-
         .pipe(parse({ delimiter: ',', from_line: 2 }))
-        .on('data', function (csvrow) {
+        .on('data', function (csvrow: string[]) {
           csvData.push(csvrow);
         })
         .on('end', () => resolve(csvData));
@@ -92,7 +91,7 @@ function fileReader(path: string | any[]) {
 
 const createWindow = async () => {
   if (isDebug) {
-    await installExtensions();
+    // await installExtensions();
   }
 
   const RESOURCES_PATH = app.isPackaged
@@ -143,7 +142,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 /**
@@ -163,7 +162,6 @@ app
   .then(() => {
     createWindow();
     app.on('activate', () => {
-      ipcMain.handle('dialog:openFile', handleFileOpen);
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
