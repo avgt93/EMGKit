@@ -64,7 +64,7 @@ export const options = {
   },
 };
 
-function Hello() {
+function EMGApp() {
   const [filePath, setFilePath] = useState<string[] | string>('');
   const [plotList, setPlotList] = useState<plotList>({
     labels: [''],
@@ -150,7 +150,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Hello />} />
+        <Route path="/" element={<EMGApp />} />
       </Routes>
     </Router>
   );
