@@ -11,7 +11,7 @@ enum SAMPLE_FREQUENCY {
 //coefficients of transfer function of LPF
 //[sampleFreqInd][order]
 const lpf_numerator_coef: readonly number[][] = [
-  [0.03913, 0.7827, 0.3913],
+  [0.3913, 0.7827, 0.3913],
   [0.1311, 0.2622, 0.1311],
 ];
 const lpf_denominator_coef: readonly number[][] = [
@@ -33,7 +33,7 @@ const ahf_numerator_coef_50Hz: readonly number[][] = [
   [0.5869, -1.1146, 0.5869, 1.0499, -2.0, 1.0499],
 ];
 const ahf_denominator_coef_50Hz: readonly number[][] = [
-  [1.0, -1.5395, 0.9056, 1.0 - 1.1187, 0.3129],
+  [1.0, -1.5395, 0.9056, 1.0, -1.1187, 0.3129],
   [1.0, -1.8844, 0.9893, 1.0, -1.8991, 0.9892],
 ];
 const ahf_output_gain_coef_50Hz: readonly number[] = [1.3422, 1.4399]; //[SAMPlE_FREQUENCY]

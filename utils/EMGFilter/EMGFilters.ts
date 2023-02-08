@@ -1,5 +1,4 @@
-import { flattenDiagnosticMessageText } from "typescript";
-import * as consts from "./constants";
+import * as consts from './constants';
 
 // 2nd order butterworth filter
 // cutoff frequency 150hz
@@ -7,7 +6,7 @@ function filter_2nd(
   ftype: consts.FILTER_TYPE,
   sampleFreq: number,
   inputValue: number
-) {
+): number {
   var num: number[] = [];
   var den: number[] = [];
   var state: number[] = [0, 0];
@@ -52,11 +51,16 @@ function filter_2nd(
 }
 
 //fourth order filter for humming noise
-function filter_4th(sampleFreq: number, humFreq: number, inputValue: number) {
+function filter_4th(
+  sampleFreq: number,
+  humFreq: number,
+  inputValue: number
+): number {
   var state: number[] = [];
   var num: number[] = [];
   var den: number[] = [];
-  var gain;
+  var gain: number;
+  var output: number;
 
   gain = 0;
   for (var i = 0; i < 4; i++) {
@@ -91,30 +95,29 @@ function filter_4th(sampleFreq: number, humFreq: number, inputValue: number) {
       }
       gain = consts.ahf_output_gain_coef_60Hz[1];
     }
-
-    var stageOut = num[0] * inputValue + state[0];
-    state[0] = num[1] * inputValue + state[1] - den[1] * stageOut;
-    state[1] = num[2] * inputValue - den[2] * stageOut;
-
-    var stageIn = stageOut;
-    stageOut = num[3] * stageOut + state[2];
-    state[2] = num[4] * stageIn + state[3] - den[4] * stageOut;
-    state[3] = num[5] * stageIn - den[5] * stageOut;
-
-    var output = gain * stageOut;
-
-    return output;
   }
+  var stageOut: number = num[0] * inputValue + state[0];
+  state[0] = num[1] * inputValue + state[1] - den[1] * stageOut;
+  state[1] = num[2] * inputValue - den[2] * stageOut;
+
+  var stageIn: number = stageOut;
+  stageOut = num[3] * stageOut + state[2];
+  state[2] = num[4] * stageIn + state[3] - den[4] * stageOut;
+  state[3] = num[5] * stageIn - den[5] * stageOut;
+
+  output = gain * stageOut;
+
+  return output;
 }
 
 function EMGFilter(
-  sampleFreq: consts.SAMPLE_FREQUENCY,
-  notchFreq: consts.NOTCH_FREQUENCY,
+  sampleFreq: number,
+  notchFreq: number,
   enableNotchFilter: boolean,
-  enableHighPassFilter: boolean,
   enableLowPassFilter: boolean,
+  enableHighPassFilter: boolean,
   inputValue: number
-) {
+): number {
   var bypassEnabled: boolean = true;
 
   if (
@@ -126,7 +129,7 @@ function EMGFilter(
     bypassEnabled = false;
   }
 
-  var output = 0;
+  var output: number = 0;
   if (bypassEnabled) {
     return (output = inputValue);
   }
@@ -138,11 +141,11 @@ function EMGFilter(
   }
 
   if (enableLowPassFilter) {
-    output = filter_2nd(consts.FILTER_TYPE.LOWPASS, sampleFreq, inputValue);
+    output = filter_2nd(consts.FILTER_TYPE.LOWPASS, sampleFreq, output);
   }
 
   if (enableHighPassFilter) {
-    output = filter_2nd(consts.FILTER_TYPE.HIGHPASS, sampleFreq, inputValue);
+    output = filter_2nd(consts.FILTER_TYPE.HIGHPASS, sampleFreq, output);
   }
 
   return output;
