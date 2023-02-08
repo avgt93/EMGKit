@@ -1,0 +1,52 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+body {
+  position: relative;
+  height: 100vh;
+  font-family: sans-serif;
+  overflow-y: hidden;
+  display: flex;
+}
+.controls {
+}
+.file-select-btn {
+  border: 1px solid #ccc;
+  background-color: #1976d2;
+  color: #ffffff;
+  display: inline-block;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.record-btn {
+  border: 1px solid #ccc;
+  background-color: #e70049;
+  color: #ffffff;
+  display: inline-block;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  height: fit-content;
+  width: fit-content;
+  margin: 10px;
+}
+
+a:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
+.Hello {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
