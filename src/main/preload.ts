@@ -21,6 +21,9 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    openFile(channel: 'dialog:openFile', func: (...args: unknown[]) => []) {
+      ipcRenderer.invoke(channel);
+    },
   },
 };
 

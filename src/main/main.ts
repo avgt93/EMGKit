@@ -9,11 +9,14 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import fs from 'fs';
+import array from 'lodash';
+import { parse } from 'csv-parse';
 
 class AppUpdater {
   constructor() {
@@ -56,6 +59,37 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+async function handleFileOpen() {
+  console.log('1');
+  const { canceled, filePaths } = await dialog?.showOpenDialog({
+    properties: [],
+  });
+  console.log('2');
+  if (canceled) {
+    return;
+  } else {
+    const data = await fileReader(filePaths);
+    return [filePaths[0], data];
+  }
+}
+
+function fileReader(path: string | any[]) {
+  return new Promise((resolve) => {
+    var csvData: any[];
+    for (var i = 0; i < path.length; i++) {
+      var file = path[i];
+
+      fs.createReadStream(file)
+
+        .pipe(parse({ delimiter: ',', from_line: 2 }))
+        .on('data', function (csvrow) {
+          csvData.push(csvrow);
+        })
+        .on('end', () => resolve(csvData));
+    }
+  });
+}
+
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
@@ -71,8 +105,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 800,
+    height: 665,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
@@ -129,6 +163,7 @@ app
   .then(() => {
     createWindow();
     app.on('activate', () => {
+      ipcMain.handle('dialog:openFile', handleFileOpen);
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
