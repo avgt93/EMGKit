@@ -17,6 +17,7 @@ const electronHandler = {
   // once(channel: Channels, func: (...args: unknown[]) => void) {
   //   ipcRenderer.once(channel, (_event, ...args) => func(...args));
   // },
+  onFilter: (value: boolean) => ipcRenderer.send('set-filter', value),
   openFile<P extends any[], R extends string[][]>(
     channel: 'dialog:openFile',
     func: (...args: P) => [[]]

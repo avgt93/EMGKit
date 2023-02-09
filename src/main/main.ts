@@ -9,7 +9,15 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  dialog,
+  IpcRendererEvent,
+  IpcMainEvent,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -64,6 +72,14 @@ if (isDebug) {
 //     .catch(console.log);
 // };
 
+let filterSwitch: boolean = false;
+
+function handleFilterOption(event: IpcMainEvent, value: boolean) {
+  filterSwitch = value;
+}
+
+ipcMain.on('set-filter', handleFilterOption);
+
 async function handleFileOpen() {
   const { canceled, filePaths } = await dialog?.showOpenDialog({
     properties: [],
@@ -74,23 +90,26 @@ async function handleFileOpen() {
     const data: string[][] = <Array<Array<string>>>await fileReader(filePaths);
     data.shift();
 
-    let filteredData: string[][] = [[]];
-
-    for (var i = 0; i < data.length; i++) {
-      let output: number = EMGFilter(
-        SAMPLE_FREQUENCY.FREQ_500HZ,
-        NOTCH_FREQUENCY.FREQ_50HZ,
-        true,
-        true,
-        true,
-        parseInt(data[i][1])
-      );
-      filteredData = data;
-      filteredData[i].pop();
-      filteredData[i].push(output.toString());
+    let finalData: string[][] = [[]];
+    if (filterSwitch) {
+      for (var i = 0; i < data.length; i++) {
+        let output: number = EMGFilter(
+          SAMPLE_FREQUENCY.FREQ_500HZ,
+          NOTCH_FREQUENCY.FREQ_50HZ,
+          true,
+          true,
+          true,
+          parseInt(data[i][1])
+        );
+        finalData = data;
+        finalData[i].pop();
+        finalData[i].push(output.toString());
+      }
+    } else {
+      finalData = data;
     }
-    console.log(filteredData);
-    return [filePaths[0], filteredData];
+
+    return [filePaths[0], finalData];
   }
 }
 
@@ -128,6 +147,7 @@ const createWindow = async () => {
     width: 800,
     height: 665,
     icon: getAssetPath('icon.png'),
+    autoHideMenuBar: true,
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')

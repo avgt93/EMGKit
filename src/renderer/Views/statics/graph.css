@@ -1,0 +1,48 @@
+.graph-root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+.graph-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.graph-back-button {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 5px;
+}
+.graph-controls-upload {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+.graph-filepath {
+  width: 70vw;
+  height: 30px;
+}
+.graph-controls-options {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+.graph-file-button {
+  padding: 10px 30px 10px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #1976d2;
+  border-radius: 8px;
+  color: #ffffff;
+  border: none;
+}
+.graph-file-button:hover {
+  background-color: #0069d2;
+}
