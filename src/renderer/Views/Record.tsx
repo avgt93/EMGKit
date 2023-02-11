@@ -1,4 +1,5 @@
-import { Ref, useEffect, useRef, useState } from 'react';
+import { Ref, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { useInterval } from '../../../utils/CustomHooks/useInterval';
 import './statics/record.css';
 import {
   Chart as ChartJS,
@@ -15,6 +16,7 @@ import { Chart } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import CustomBackButton from './components/CustomBackButton';
 import { ForwardedRef } from 'react-chartjs-2/dist/types';
+import { ipcRenderer } from 'electron';
 
 ChartJS.register(
   LinearScale,
@@ -36,6 +38,11 @@ interface valueList {
 interface plotList {
   labels: string[];
   datasets: valueList[];
+}
+
+interface csvData {
+  date: number[];
+  value: number[];
 }
 
 export const options = {
@@ -63,11 +70,13 @@ export const options = {
     },
   },
 };
-function Graph() {
+function Record() {
   const [filePath, setFilePath] = useState<string[] | string>('');
+  // const [csvData, setCsvData] = useState<csvData[]>([]);
+  // const [stopFlag, setStopFlag] = useState<boolean>(true);
   const chartRef = useRef<ChartJS | null>(null);
   const [plotList, setPlotList] = useState<plotList>({
-    labels: [''],
+    labels: [],
     datasets: [
       {
         label: '',
@@ -77,25 +86,40 @@ function Graph() {
       },
     ],
   });
-  // const
+  const [fileName, setFileName] = useState<string>('');
+  const [fileNameError, setFileNameError] = useState<string>('');
+  const [stopFlag, setStopFlag] = useState<boolean>(true);
+
   const handleChange = (chartRef: any) => {
-    console.log(chartRef);
-    //async data here
-    chartRef.data.labels.push(Date.now());
-    chartRef.data.datasets[0].data.push(Math.random());
+    if (!stopFlag) {
+      let currentDate = Date.now();
+      let mathRandomInt = Math.random();
 
-    chartRef.update();
+      //async data here
+      chartRef.data.labels.push(currentDate);
+      chartRef.data.datasets[0].data.push(mathRandomInt);
+      // console.log([...csvData, [currentDate, mathRandomInt]]);
+      // setCsvData(csvData.push({ data: currentDate, value: mathRandomInt }));
+      chartRef.update();
+    }
   };
+
+  const handleStop = () => {
+    setStopFlag(true);
+  };
+
+  const handleInputChange = (e: HTMLInputElement) => {
+    setFileName(e.value);
+  };
+
+  const arrayBuffer: csvData[] = [];
+
+  useInterval(() => {
+    handleChange(chartRef.current);
+  }, 2000);
+
   useEffect(() => {
-    const chart = chartRef.current;
-
-    const dataChange = setInterval(() => {
-      handleChange(chart);
-    }, 100);
-
-    return () => {
-      clearInterval(dataChange);
-    };
+    return () => {};
   }, []);
   return (
     <div className="record-root">
@@ -107,9 +131,54 @@ function Graph() {
         </div>
         <div className="record-title">The Graph is Listening for Input</div>
         <div className="record-controls-options">
-          {/* <CustomSwitch switchLabel="Animate" onFunc={() => {}} /> */}
+          <div className="record-textbox-area">
+            <input
+              placeholder="Enter File Name"
+              type="text"
+              value={fileName}
+              onChange={(e) => {
+                handleInputChange(e.target);
+              }}
+              className="record-fileName"
+            />
+
+            <span className="record-input-error">{fileNameError}</span>
+          </div>
+          <button
+            className="record-media-button record-start-button"
+            onClick={() => {
+              setStopFlag(false);
+              // setStopFlag(false);
+            }}
+          >
+            <div className="record-start-button-object"></div>
+          </button>
+          <button
+            className="record-media-button record-stop-button"
+            onClick={handleStop}
+          >
+            <div className="record-stop-button-object"></div>
+          </button>
+          <button
+            onClick={() => {
+              if (fileName != '') {
+                window.electron.sendSaveData([
+                  chartRef.current?.data.labels,
+                  chartRef.current?.data.datasets[0].data,
+                  fileName,
+                ]);
+              } else {
+                setFileNameError('Invalid: File Name not Set');
+              }
+              handleStop();
+            }}
+            className="record-save-button"
+          >
+            Save
+          </button>
         </div>
       </div>
+      {/* {console.log(csvData)} */}
       <div id="plotly-container">
         <Chart
           ref={chartRef}
@@ -125,5 +194,5 @@ function Graph() {
 }
 
 export default function App() {
-  return <Graph />;
+  return <Record />;
 }

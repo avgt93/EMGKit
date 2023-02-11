@@ -129,6 +129,21 @@ function fileReader(path: string[]) {
   });
 }
 
+ipcMain.handle('sendSaveData', (event, csvData) => {
+  let data: number[][] = [];
+  for (let i = 0; i < csvData[0].length; i++) {
+    data.push([csvData[0][i], csvData[1][i]]);
+  }
+  const stringify = require('csv-stringify');
+  stringify.stringify(data, (err: any, output: any) => {
+    fs.writeFileSync(
+      path.join(__dirname + '../../../assets/data/' + csvData[2] + '.csv'),
+      output
+    );
+  });
+});
+// console.log('nooooooooo');
+
 const createWindow = async () => {
   if (isDebug) {
     // await installExtensions();
@@ -145,7 +160,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 800,
-    height: 665,
+    height: 680,
     icon: getAssetPath('icon.png'),
     autoHideMenuBar: true,
     webPreferences: {

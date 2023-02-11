@@ -14,9 +14,10 @@ const electronHandler = {
   //     ipcRenderer.removeListener(channel, subscription);
   //   };
   // },
-  // once(channel: Channels, func: (...args: unknown[]) => void) {
+  // once(channel: 'saveFile', func: (...args: unknown[]) => void) {
   //   ipcRenderer.once(channel, (_event, ...args) => func(...args));
   // },
+
   onFilter: (value: boolean) => ipcRenderer.send('set-filter', value),
   openFile<P extends any[], R extends string[][]>(
     channel: 'dialog:openFile',
@@ -24,6 +25,8 @@ const electronHandler = {
   ) {
     return ipcRenderer.invoke(channel) as Promise<R>;
   },
+
+  sendSaveData: (data: unknown) => ipcRenderer.invoke('sendSaveData', data),
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

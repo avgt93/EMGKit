@@ -101,15 +101,18 @@
     "chartjs-plugin-streaming": "^2.0.0",
     "chartjs-plugin-zoom": "^2.0.0",
     "csv-parse": "^5.3.4",
+    "csv-stringify": "^6.2.4",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^5.3.0",
+    "fs": "^0.0.1-security",
     "luxon": "^3.2.1",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0"
+    "react-router-dom": "^6.8.0",
+    "tone": "^14.7.77"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
