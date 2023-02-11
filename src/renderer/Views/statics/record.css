@@ -4,12 +4,14 @@
   align-items: center;
   height: 100vh;
   flex-direction: column;
+  gap: 20px;
 }
 .record-controls {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 20px;
   gap: 20px;
 }
 .record-back-button {
@@ -27,7 +29,13 @@
 .record-controls-options {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 10px;
+}
+.record-fileName {
+  width: 50vw;
+  height: 30px;
+  font-size: 1em;
+  text-indent: 10px;
 }
 .record-file-button {
   padding: 10px 30px 10px 30px;
@@ -41,17 +49,51 @@
 .record-file-button:hover {
   background-color: #0069d2;
 }
-
-.record-btn, .save-button, .stop-button {
-  border: 1px solid #ccc;
-  background-color: #e70049;
-  color: #ffffff;
-  display: inline-block;
-  padding: 9px 12px;
+.record-textbox-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.record-input-error {
+  color: #e70049;
+  margin-left: 10px;
+  position: absolute;
+  font-size: 0.9em;
+  bottom: -1.4em;
+}
+.record-media-button {
+  padding: 10px 15px 10px 15px;
+  border-radius: 8px;
   cursor: pointer;
+  border-radius: 8px;
+  color: #ffffff;
+  border: none;
+}
+.record-start-button {
+  background-color: #347d39;
+}
+.record-start-button-object {
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 12px solid #ffffff;
 }
 
-.save-button{
-  background-color: #5aac49;
-  margin-left: 10px;
+.record-stop-button {
+  background-color: #e70049;
+}
+.record-stop-button-object {
+  padding: 7px;
+  background-color: #ffffff;
+}
+
+.record-save-button {
+  padding: 10px 30px 10px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #347d39;
+  border-radius: 8px;
+  color: #ffffff;
+  border: none;
 }

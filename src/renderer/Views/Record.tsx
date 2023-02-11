@@ -1,4 +1,5 @@
-import { Ref, useEffect, useRef, useState } from 'react';
+import { Ref, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { useInterval } from '../../../utils/CustomHooks/useInterval';
 import './statics/record.css';
 import {
   Chart as ChartJS,
@@ -69,10 +70,10 @@ export const options = {
     },
   },
 };
-function Graph() {
+function Record() {
   const [filePath, setFilePath] = useState<string[] | string>('');
   // const [csvData, setCsvData] = useState<csvData[]>([]);
-  const [stopFlag, setStopFlag] = useState<boolean>(false);
+  // const [stopFlag, setStopFlag] = useState<boolean>(true);
   const chartRef = useRef<ChartJS | null>(null);
   const [plotList, setPlotList] = useState<plotList>({
     labels: [],
@@ -85,9 +86,11 @@ function Graph() {
       },
     ],
   });
-  // const
+  const [fileName, setFileName] = useState<string>('');
+  const [fileNameError, setFileNameError] = useState<string>('');
+  const [stopFlag, setStopFlag] = useState<boolean>(true);
+
   const handleChange = (chartRef: any) => {
-    // console.log(chartRef);
     if (!stopFlag) {
       let currentDate = Date.now();
       let mathRandomInt = Math.random();
@@ -102,22 +105,21 @@ function Graph() {
   };
 
   const handleStop = () => {
-    setStopFlag(!stopFlag);
+    setStopFlag(true);
+  };
+
+  const handleInputChange = (e: HTMLInputElement) => {
+    setFileName(e.value);
   };
 
   const arrayBuffer: csvData[] = [];
 
-  // console.log(csvData);
-  useEffect(() => {
-    const chart = chartRef.current;
-    const dataChange = setInterval(() => {
-      if (!stopFlag) handleChange(chart);
-      // console.log(csvData);
-    }, 100);
+  useInterval(() => {
+    handleChange(chartRef.current);
+  }, 2000);
 
-    return () => {
-      clearInterval(dataChange);
-    };
+  useEffect(() => {
+    return () => {};
   }, []);
   return (
     <div className="record-root">
@@ -129,27 +131,52 @@ function Graph() {
         </div>
         <div className="record-title">The Graph is Listening for Input</div>
         <div className="record-controls-options">
-          {/* <CustomSwitch switchLabel="Animate" onFunc={() => {}} /> */}
-        </div>
-      </div>
-      <div>
-        <button className="stop-button" onClick={() => setStopFlag(!stopFlag)}>
-          Stop
-        </button>
-        <button
-          onClick={() => {
-            console.log(chartRef.current?.data.labels);
+          <div className="record-textbox-area">
+            <input
+              placeholder="Enter File Name"
+              type="text"
+              value={fileName}
+              onChange={(e) => {
+                handleInputChange(e.target);
+              }}
+              className="record-fileName"
+            />
 
-            window.electron.sendSaveData([
-              chartRef.current?.data.labels,
-              chartRef.current?.data.datasets[0].data,
-            ]);
-            handleStop();
-          }}
-          className="save-button"
-        >
-          Save
-        </button>
+            <span className="record-input-error">{fileNameError}</span>
+          </div>
+          <button
+            className="record-media-button record-start-button"
+            onClick={() => {
+              setStopFlag(false);
+              // setStopFlag(false);
+            }}
+          >
+            <div className="record-start-button-object"></div>
+          </button>
+          <button
+            className="record-media-button record-stop-button"
+            onClick={handleStop}
+          >
+            <div className="record-stop-button-object"></div>
+          </button>
+          <button
+            onClick={() => {
+              if (fileName != '') {
+                window.electron.sendSaveData([
+                  chartRef.current?.data.labels,
+                  chartRef.current?.data.datasets[0].data,
+                  fileName,
+                ]);
+              } else {
+                setFileNameError('Invalid: File Name not Set');
+              }
+              handleStop();
+            }}
+            className="record-save-button"
+          >
+            Save
+          </button>
+        </div>
       </div>
       {/* {console.log(csvData)} */}
       <div id="plotly-container">
@@ -167,5 +194,5 @@ function Graph() {
 }
 
 export default function App() {
-  return <Graph />;
+  return <Record />;
 }
