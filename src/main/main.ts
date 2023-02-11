@@ -129,6 +129,23 @@ function fileReader(path: string[]) {
   });
 }
 
+
+
+ipcMain.handle('sendSaveData', (event, csvData) => {
+  let data:number[][]=[];
+  for(let i=0;i<csvData[0].length;i++){
+    data.push([csvData[0][i],csvData[1][i]])
+  }
+  console.log(data)
+  const stringify = require('csv-stringify');
+  stringify.stringify(data,(err: any,output: any)=>{
+    fs.writeFileSync(path.join(__dirname+"../../../assets/data/realtime.csv"),output)
+
+  })
+
+});
+// console.log('nooooooooo');
+
 const createWindow = async () => {
   if (isDebug) {
     // await installExtensions();

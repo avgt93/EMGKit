@@ -11,7 +11,6 @@ import {
   Legend,
 } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
-
 import { Line } from 'react-chartjs-2';
 import CustomSwitch from './components/CustomSwitch';
 import { Link } from 'react-router-dom';

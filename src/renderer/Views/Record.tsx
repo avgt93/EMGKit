@@ -15,6 +15,7 @@ import { Chart } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import CustomBackButton from './components/CustomBackButton';
 import { ForwardedRef } from 'react-chartjs-2/dist/types';
+import { ipcRenderer } from 'electron';
 
 ChartJS.register(
   LinearScale,
@@ -36,6 +37,11 @@ interface valueList {
 interface plotList {
   labels: string[];
   datasets: valueList[];
+}
+
+interface csvData {
+  date: number[];
+  value: number[];
 }
 
 export const options = {
@@ -65,9 +71,11 @@ export const options = {
 };
 function Graph() {
   const [filePath, setFilePath] = useState<string[] | string>('');
+  // const [csvData, setCsvData] = useState<csvData[]>([]);
+  const [stopFlag, setStopFlag] = useState<boolean>(false);
   const chartRef = useRef<ChartJS | null>(null);
   const [plotList, setPlotList] = useState<plotList>({
-    labels: [''],
+    labels: [],
     datasets: [
       {
         label: '',
@@ -79,18 +87,32 @@ function Graph() {
   });
   // const
   const handleChange = (chartRef: any) => {
-    console.log(chartRef);
-    //async data here
-    chartRef.data.labels.push(Date.now());
-    chartRef.data.datasets[0].data.push(Math.random());
+    // console.log(chartRef);
+    if (!stopFlag) {
+      let currentDate = Date.now();
+      let mathRandomInt = Math.random();
 
-    chartRef.update();
+      //async data here
+      chartRef.data.labels.push(currentDate);
+      chartRef.data.datasets[0].data.push(mathRandomInt);
+      // console.log([...csvData, [currentDate, mathRandomInt]]);
+      // setCsvData(csvData.push({ data: currentDate, value: mathRandomInt }));
+      chartRef.update();
+    }
   };
+
+  const handleStop = () => {
+    setStopFlag(!stopFlag);
+  };
+
+  const arrayBuffer: csvData[] = [];
+
+  // console.log(csvData);
   useEffect(() => {
     const chart = chartRef.current;
-
     const dataChange = setInterval(() => {
-      handleChange(chart);
+      if (!stopFlag) handleChange(chart);
+      // console.log(csvData);
     }, 100);
 
     return () => {
@@ -110,6 +132,26 @@ function Graph() {
           {/* <CustomSwitch switchLabel="Animate" onFunc={() => {}} /> */}
         </div>
       </div>
+      <div>
+        <button className="stop-button" onClick={() => setStopFlag(!stopFlag)}>
+          Stop
+        </button>
+        <button
+          onClick={() => {
+            console.log(chartRef.current?.data.labels);
+
+            window.electron.sendSaveData([
+              chartRef.current?.data.labels,
+              chartRef.current?.data.datasets[0].data,
+            ]);
+            handleStop();
+          }}
+          className="save-button"
+        >
+          Save
+        </button>
+      </div>
+      {/* {console.log(csvData)} */}
       <div id="plotly-container">
         <Chart
           ref={chartRef}

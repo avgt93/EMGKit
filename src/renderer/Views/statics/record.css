@@ -42,11 +42,16 @@
   background-color: #0069d2;
 }
 
-.record-btn {
+.record-btn, .save-button, .stop-button {
   border: 1px solid #ccc;
   background-color: #e70049;
   color: #ffffff;
   display: inline-block;
   padding: 9px 12px;
   cursor: pointer;
+}
+
+.save-button{
+  background-color: #5aac49;
+  margin-left: 10px;
 }
